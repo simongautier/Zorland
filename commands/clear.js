@@ -8,7 +8,7 @@ module.exports = {
 
         async execute(interaction) {
             //clear all messages
-        let fetched = await interaction.channel.messages.fetch({limit: 10});
+        let fetched = await interaction.channel.messages.fetch({limit: 100});
         interaction.channel.bulkDelete(fetched);
         await interaction.reply({ content: 'messages effacés', ephemeral: true })
         .then
