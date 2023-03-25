@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const json = require('../config.json');
 const fetch = require('node-fetch');
+const runeType = require('../commands/assets/Runes_Type.json');
 
 async function getPage(url) {
     const response = await fetch(url, {
@@ -41,7 +42,6 @@ module.exports = {
 
         const content = await getPage(url);
 
-        console.log(content);
         if (content.detail == "Not found." || content.count == 0) {
             return await interaction.reply("Le monstre n'a pas été trouvé", ephemral = true);
         }
@@ -62,6 +62,40 @@ module.exports = {
             const total_DC = content.results[i].rune_crit_damage + content.results[i].base_crit_damage;
             const total_RES = content.results[i].rune_resistance + content.results[i].base_resistance;
             const total_ACC = content.results[i].rune_accuracy + content.results[i].base_accuracy;
+
+            const runeSet = content.results[i].default_build;
+            console.log(runeSet.runes);
+        
+            console.log(runeSet.runes[0].type);
+
+            const occurence  = runeSet.runes.reduce((acc, rune) => {
+                const type = rune.type
+                if (!(type in acc)) {
+                    acc[type] = 1
+                }  else {
+                    acc[type] += 1
+                }
+                return acc;
+            }, {})
+            console.log(occurence);
+
+            const runeSetmonster = Object.entries(occurence)
+
+            const listSet = [];
+
+            for (let j = 0; j < runeSetmonster.length; j++) {
+                const typeRune = runeSetmonster[j][0];
+                const runeOccurence = runeSetmonster[j][1];
+
+                const verif = runeType.find(elt => elt.type == typeRune)
+
+                console.log(verif, runeOccurence)
+                if (runeOccurence >= verif.SetNbr) {
+                    console.log(verif.name);
+                    listSet.push(verif.name);  
+                }
+              
+            }
 
             const embed = new EmbedBuilder()
                 .setTitle(`${name.toUpperCase()}`)
@@ -113,6 +147,13 @@ module.exports = {
                     name: 'Précision',
                     value: String(total_ACC) + " (+ " + String(content.results[i].rune_accuracy) + ")",
                     inline: true,
+                }, {
+                    name: '   ',
+                    value: '   ',
+                }, {
+                    name: 'Rune Set',
+                    value: listSet.join(', '),
+
                 })
 
             listEmbed.push(embed);
