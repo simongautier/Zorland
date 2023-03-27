@@ -1,4 +1,6 @@
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { Player } = require('discord-player');
+
 
 const client = new Client({
         intents: [
@@ -6,13 +8,21 @@ const client = new Client({
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
             GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.GuildMessageTyping,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.Guilds,
         ],
     });
 const prefix = '-';
 const fs = require('node:fs');
 const path = require('node:path');
 const conf = require('./config.json');
+
+console.log(conf);
 client.login(conf.token);
+
 
 
 client.commands = new Collection();
@@ -57,3 +67,5 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.on(Events.InteractionCreate, interaction => {
 });
+
+
