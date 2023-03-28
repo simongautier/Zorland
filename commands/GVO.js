@@ -6,7 +6,6 @@ const fs = require('fs');
 
 async function editMessage(message, interaction, GVO) {
     await interaction.guild.members.fetch();
-    console.log(await interaction.guild.members.fetch())
     let GVOString = '';
     await interaction.guild.members.cache.forEach(member => {
 
@@ -59,13 +58,16 @@ module.exports = {
             const member = interaction.member;
             const role = interaction.guild.roles.cache.find(role => role.name === 'gvo');
             let content = '';
+            const membername = member.user.username;
 
             if (interaction.customId === 'GVO_ON') {
                 member.roles.add(role);
+                console.log(membername + " s'est inscrit à la GVO")
                 content = 'Vous êtes désormais inscrit à la GVO'
             }
             else if (interaction.customId === 'GVO_OFF'){
                 member.roles.remove(role);
+                console.log(membername + " s'est désinscrit de la GVO")
                 content = 'Vous êtes désormais désinscrit de la GVO'
             }
             else {

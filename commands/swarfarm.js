@@ -14,19 +14,30 @@ async function getPage(url) {
 }
 
 async function getImage(response) {
-    let monsterId = response.results[0].monster;
+    let monsterId = response;
     let url = `https://swarfarm.com/api/v2/monsters/${monsterId}/`;
     let response2 = await getPage(url);
     let image = `./commands/assets/monsters/${response2.image_filename}`;
     return image;
 }
 
+const toUpperCase = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+function formattingName(name) {
+    
+    if (name === name.toLowerCase()) {
+        return toUpperCase(name);
+    }
+    if (name === toUpperCase(name)) {
+        return name.toLowerCase();
+    }
+}
 
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('swarfarm')
-        .setDescription('Clears messages.')
+        .setDescription('Voir les infos d\'un monstre d\'un invocateur référencé dans Swarfarm')
         .addStringOption(option => option.setName('name').setDescription('The name of the monster').setRequired(true))
         .addStringOption(option => option.setName('owner').setDescription('The owner of the monster').setRequired(true)),
 
@@ -40,19 +51,29 @@ module.exports = {
 
         url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters/?monster__name=${name}`;
 
-        const content = await getPage(url);
+        let content = await getPage(url);
 
         if (content.detail == "Not found." || content.count == 0) {
-            return await interaction.reply("Le monstre n'a pas été trouvé", ephemral = true);
+
+            content = await getPage(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`);
+
+
+            if (content.detail == "Not found." || content.count == 0) {
+            await interaction.editReply("Le monstre n'a pas été trouvé", ephemral = true);
+            return;
+            }
         }
+
+
         let nbrMonsters = content.count;
 
         const listEmbed = [];
-
-        const test = await getImage(content);
-        const imageMonster = new AttachmentBuilder(test, { name: 'image.png' });
+        const listImg = [];
 
         for (let i = 0; i < nbrMonsters; i++) {
+
+            const test = await getImage(content.results[i].monster);
+            const imageMonster = new AttachmentBuilder(test, { name: 'image' + String(i) + '.png' });
 
             const total_ATK = content.results[i].rune_attack + content.results[i].base_attack;
             const total_DEF = content.results[i].rune_defense + content.results[i].base_defense;
@@ -64,9 +85,6 @@ module.exports = {
             const total_ACC = content.results[i].rune_accuracy + content.results[i].base_accuracy;
 
             const runeSet = content.results[i].default_build;
-            console.log(runeSet.runes);
-        
-            console.log(runeSet.runes[0].type);
 
             const occurence  = runeSet.runes.reduce((acc, rune) => {
                 const type = rune.type
@@ -77,7 +95,6 @@ module.exports = {
                 }
                 return acc;
             }, {})
-            console.log(occurence);
 
             const runeSetmonster = Object.entries(occurence)
 
@@ -86,12 +103,9 @@ module.exports = {
             for (let j = 0; j < runeSetmonster.length; j++) {
                 const typeRune = runeSetmonster[j][0];
                 const runeOccurence = runeSetmonster[j][1];
-
                 const verif = runeType.find(elt => elt.type == typeRune)
 
-                console.log(verif, runeOccurence)
                 if (runeOccurence >= verif.SetNbr) {
-                    console.log(verif.name);
                     listSet.push(verif.name);  
                 }
               
@@ -101,11 +115,8 @@ module.exports = {
                 .setTitle(`${name.toUpperCase()}`)
                 .setDescription(`De ${owner}`)
                 .setColor(0x206694)
-                .setThumbnail(`attachment://image.png`)
+                .setThumbnail(`attachment://` + 'image' + String(i) + '.png')
                 .addFields({
-                    name: '   ',
-                    value: '   ',
-                }, {
                     name: 'HP',
                     value: String(total_HP) + " (+ " + String(content.results[i].rune_hp) + ")",
                     inline: true,
@@ -152,12 +163,14 @@ module.exports = {
                     value: '   ',
                 }, {
                     name: 'Rune Set',
-                    value: listSet.join(', '),
+                    value: listSet.length == 0 ? "Pas de set" : listSet.join(', '),
 
                 })
-
+            listImg.push(imageMonster);
             listEmbed.push(embed);
         }
-        await interaction.editReply({ embeds: listEmbed, files: [imageMonster] });
+        const membername = interaction.member.user.username;
+        console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
+        await interaction.editReply({ embeds: listEmbed, files: listImg });
     }
 }

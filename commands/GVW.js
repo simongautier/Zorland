@@ -4,7 +4,6 @@ const fs = require('fs');
 
 async function editMessage(message, interaction, GVW) {
     await interaction.guild.members.fetch();
-    console.log(await interaction.guild.members.fetch())
     let GVWString = '';
     await interaction.guild.members.cache.forEach(member => {
 
@@ -59,12 +58,15 @@ module.exports = {
             const member = interaction.member;
             const role = interaction.guild.roles.cache.find(role => role.name === 'gvgworld');
             content = '';
+            const membername = member.user.username;
             if (interaction.customId === 'GVW_ON') {
                 member.roles.add(role);
+                console.log(membername + " s'est inscrit à la GVW");
                 content = 'Vous êtes désormais inscrit à la GVW';
             }
             else if (interaction.customId === 'GVW_OFF'){
                 member.roles.remove(role);
+                console.log(membername + " s'est désinscrit de la GVW");
                 content = 'Vous êtes désormais désinscrit de la GVW';
             }
             else {
