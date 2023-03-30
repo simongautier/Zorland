@@ -6,6 +6,10 @@ const client = new Client({
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
             GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.GuildMessageTyping,
+			GatewayIntentBits.GuildPresences,
         ],
     });
 const prefix = '-';
