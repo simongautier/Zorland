@@ -47,11 +47,11 @@ module.exports = {
         );
         const YTapiKey = ConfigJSON.YoutubeAPIKey;
 
-        interaction.deferReply();
+
 
         if (subcommand === 'play') {
 
-
+            interaction.deferReply();
             const query = interaction.options.getString('query');
 
 
@@ -68,8 +68,7 @@ module.exports = {
             console.log(queryResult.items[0].thumbnails);
 
             const Finalquery = String(queryResult.items[0].url);
-            const stream = ytdl(String(Finalquery), { filter: 'audioonly' });
-            // console.log(await ytdl.getInfo("https://www.youtube.com/watch?v=U41bONK2V-U"));
+            const stream = ytdl(String(Finalquery), { filter: 'audioonly' }, { highWaterMark: 1 << 25 }, { quality: 'highestaudio' });
 
             const connection = new joinVoiceChannel({
                 channelId: interaction.member.voice.channel.id,
@@ -79,12 +78,12 @@ module.exports = {
                 selfMute: false,
             });
 
-            const subscription = connection.subscribe(player);
+            connection.subscribe(player);
             const resource = createAudioResource(stream, { inlineVolume: true });
             resource.volume.setVolume(0.2); 
-            player.play(resource);
 
-            const embed = new EmbedBuilder()
+
+            let embed = new EmbedBuilder()
                 .setTitle(queryResult.items[0].title)
                 .setURL(queryResult.items[0].url)
                 .setThumbnail(String(queryResult.items[0].bestThumbnail.url))
@@ -93,21 +92,22 @@ module.exports = {
                 .setTimestamp()
                 .setColor(0x00AE86)
 
+            player.play(resource);
 
             await interaction.editReply({ embeds: [embed] });
         }
 
         if (subcommand === 'pause') {
+            console.log("pause");
+            console.log(player.state.status);
             player.pause();
-            await interaction.editReply('Pausing music');
         }
         if (subcommand === 'resume') {
             player.unpause();
-            await interaction.editReply('Resuming music');
         }
         if (subcommand === 'stop') {
             player.stop();
-            await interaction.editReply('Stopping music');
+            await interaction.editReply("Stopped playing music");
         }
 
     }   
