@@ -57,7 +57,3 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 });
-
-
-client.on(Events.InteractionCreate, interaction => {
-});

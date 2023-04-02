@@ -1,10 +1,12 @@
 const { SlashCommandBuilder, hideLinkEmbed } = require('@discordjs/builders');
-const { createAudioPlayer, NoSubscriberBehavior, joinVoiceChannel, createAudioResource, subscribe, VoiceConnectionStatus } = require('@discordjs/voice');
+const { createAudioPlayer, NoSubscriberBehavior, joinVoiceChannel, createAudioResource, subscribe, VoiceConnectionStatus, getVoiceConnection } = require('@discordjs/voice');
 const ConfigJSON = require('../config.json');
-const search = require('youtube-search');
 const ytdl = require('ytdl-core');
+const playdl = require('play-dl');
 const ytsr = require('ytsr');
 const { EmbedBuilder } = require('discord.js');
+const { Stream } = require('stream');
+const { type } = require('os');
 
 
 
@@ -38,6 +40,9 @@ module.exports = {
 
         const subcommand = interaction.options.getSubcommand();
 
+
+        const YTapiKey = ConfigJSON.YoutubeAPIKey;
+
         const player = new createAudioPlayer(
             {
                 behaviors: {
@@ -45,31 +50,15 @@ module.exports = {
                 },
             }
         );
-        const YTapiKey = ConfigJSON.YoutubeAPIKey;
-
-
 
         if (subcommand === 'play') {
 
             interaction.deferReply();
             const query = interaction.options.getString('query');
 
-
-            const opts = {
-                maxResults: 1,
-                key: YTapiKey,
-
-            }
-
             const queryResult = await ytsr(query);
-
-            console.log(String(queryResult.items[0].bestThumbnail));
-
-            console.log(queryResult.items[0].thumbnails);
-
-            const Finalquery = String(queryResult.items[0].url);
-            const stream = ytdl(String(Finalquery), { filter: 'audioonly' }, { highWaterMark: 1 << 25 }, { quality: 'highestaudio' });
-
+            const Finalquery = String( await queryResult.items[0].url);
+            const streamplay = await playdl.stream(Finalquery, {number: 3, boolean:false});
             const connection = new joinVoiceChannel({
                 channelId: interaction.member.voice.channel.id,
                 guildId: interaction.guild.id,
@@ -79,8 +68,8 @@ module.exports = {
             });
 
             connection.subscribe(player);
-            const resource = createAudioResource(stream, { inlineVolume: true });
-            resource.volume.setVolume(0.2); 
+            console.log(streamplay.stream);
+            const resource = createAudioResource(streamplay.stream, { inputType: streamplay.type });
 
 
             let embed = new EmbedBuilder()
@@ -95,20 +84,28 @@ module.exports = {
             player.play(resource);
 
             await interaction.editReply({ embeds: [embed] });
+            const voiceplayer = getVoiceConnection(interaction.guild.id);
+            console.log(voiceplayer);
         }
 
         if (subcommand === 'pause') {
             console.log("pause");
-            console.log(player.state.status);
-            player.pause();
+            console.log(player);
+            await player.pause();
+            player.on('error', (error) => {
+                console.log(error);
+            });
         }
         if (subcommand === 'resume') {
-            player.unpause();
+            console.log("resume");
+            console.log(player.state.status);
         }
         if (subcommand === 'stop') {
-            player.stop();
-            await interaction.editReply("Stopped playing music");
+            console.log("stop");
+            console.log(player.state.status);
         }
-
+        player.on('stateChange', (oldState, newState) => {
+            console.log(oldState.status, newState.status);
+        });
     }   
 }
