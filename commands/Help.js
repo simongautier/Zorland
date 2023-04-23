@@ -19,7 +19,16 @@ module.exports = {
             { name: '/bilangvo', value: 'Affiche la liste des joueurs inscrits aux GVO' },
             { name: '/gvw', value: 'Permets de s\'inscrire aux GVW' },
             { name: '/gvo', value: 'Permets de s\'inscrire aux GVO' },
-            { name: '/swarfarm', value: 'Affiche les stats d\'un monstre sur swarfarm (en cours de développement) \n Exemple : /swarfarm name:chandra owner:simotre' }
+            { name: '/swarfarm', value: 'Affiche les stats d\'un monstre sur swarfarm (en cours de développement) \n Exemple : /swarfarm name:chandra owner:simotre' },
+            { name: '/play <value>', value: 'Joue la musique demandée (recherche sur youtube la première musique de la recherche... faut etre un minimum précis' },
+            { name: '/disconnect', value: 'déconnecte le bot du salon' },
+            { name: '/next', value: 'Skip la musique en cours' },
+            { name: '/pause', value: 'Met en pause la musique en cours' },
+            { name: '/unpause', value: 'Reprend la musique en cours' },
+            { name: '/queue', value: 'Affiche la liste des musiques en cours' },
+            { name: '/add <value>', value: 'Permets d\'ajouter une musique à la playlist' },
+            { name: 'Pour éviter le crash', value: 'merci de join un salon vocal avant d\'utiliser la commande /music play' },
+            { name: 'NOTE IMPORTANTE', value: 'Bot en cours de développement, merci de me faire parvenir en MP les bugs rencontrés / crash ! Merci !!' },
         )
         .setTimestamp()
         .setImage("https://cdn.discordapp.com/icons/1087384979371212820/3bfaa0d053a1702f425a33671d6e1233.webp?size=128")
