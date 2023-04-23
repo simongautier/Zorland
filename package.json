@@ -17,6 +17,7 @@
     "ytdl": "^1.4.1",
     "ytdl-core": "^4.11.3",
     "ytsr": "github:Yonle/node-ytsr"
+
   },
   "name": "bot",
   "version": "1.0.0",
