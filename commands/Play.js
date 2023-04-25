@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { createAudioPlayer, NoSubscriberBehavior, joinVoiceChannel, createAudioResource, subscribe, VoiceConnectionStatus, getVoiceConnection } = require('@discordjs/voice');
 const ConfigJSON = require('../config.json');
-const {getLastRequest} = require('./Add.js');
 const playdl = require('play-dl');
 const {getNextVerif} = require('./Next.js');
 const ytsr = require('ytsr');

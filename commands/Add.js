@@ -26,6 +26,7 @@ module.exports = {
     },
 
     getQueue: function () {
+        console.log(queue);
         return queue;
     }
 };
