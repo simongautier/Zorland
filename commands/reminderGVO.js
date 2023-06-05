@@ -1,31 +1,30 @@
 const { schedule } = require('node-cron');
-const { SlashCommandBuilder, userMention, roleMention } = require('@discordjs/builders');
-const { EqualizerCoefficients } = require('@discord-player/equalizer');
+const { SlashCommandBuilder, roleMention } = require('@discordjs/builders');
 
 
 async function reminderGVO (interaction) {
     var messageGVO = "La GVO a commencé, merci de ne pas oublier vos combats ! \nBonne chance et bon courage à tous ! \n\n"
-    await interaction.channel.send(messageGVO + roleMention('1088104034596036659'));
+    await interaction.channel.send(messageGVO + roleMention('1087408574365446174'));
 }
 
 async function reminderLaby (interaction) {
     var messageLaby = "Le Labyrinthe a reset, merci de suivre les cibles des leads et de taper en Hell en priorité. \nBonne chance et bon courage à tous ! \n\n"
-    await interaction.channel.send(messageLaby + roleMention('1088104034596036659'));
+    await interaction.channel.send(messageLaby + roleMention('1087399168349315182'));
 }
 
 async function ReminderGVW(interaction) {
     var messageGVW = "La combat de Guilde World est ouvert, pensez à vos combats ! \nBonne chance et bon courage à tous ! \n\n"
-    await interaction.channel.send(messageGVW + roleMention(""));
+    await interaction.channel.send(messageGVW + roleMention("1087408484368257084"));
 }
 
 async function reminderSlime(interaction) {
     var messageslime = "Les sbires du roi des Slimes sont apparus cette nuit, pensez à les taper ! \nBonne chance et bon courage à tous ! \n\n"
-    await interaction.channel.send(messageslime + roleMention('1088104034596036659'));
+    await interaction.channel.send(messageslime + roleMention('1087399168349315182'));
 }
 
 async function reminderSlimeTwo(interaction) {
     var messageSlimeTwo = " Le roi est apparu, pensez à le taper ! \nBonne chance et bon courage à tous ! \n\n"
-    await interaction.channel.send(messageSlimeTwo + roleMention('1088104034596036659'));
+    await interaction.channel.send(messageSlimeTwo + roleMention('1087399168349315182'));
 }
 
 module.exports = {
