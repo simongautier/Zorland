@@ -6,8 +6,7 @@ const { exec } = require("child_process");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('reminders')
-        .setDescription('Active les Rappels')
-        .setStringOption(option => option.setName('reminders').setDescription('Active les Rappels').setRequired(true)),
+        .setDescription('Active les Rappels'),
 
 
     async execute(interaction) {
