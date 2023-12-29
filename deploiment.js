@@ -3,6 +3,8 @@ const { clientId, guildId, token } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 
+
+
 const commands = [];
 console.log('clientId: ' + clientId);
 console.log('guildId: ' + guildId);
