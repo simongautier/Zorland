@@ -57,8 +57,8 @@ module.exports = {
 
             content = await getPage(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`);
 
-
-            if (content.detail == "Not found." || content.count == 0) {
+             
+            if(fetch(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`).response != 200 || content.detail == "Not found." || content.count == 0) {
             await interaction.editReply("Le monstre n'a pas été trouvé", ephemral = true);
             return;
             }
