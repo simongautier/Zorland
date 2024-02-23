@@ -14,6 +14,8 @@ module.exports = {
 
         await interaction.deferReply();
 
+        const reminders = interaction.options.getString('reminders');
+        
         if (reminders === 'on') {
             exec(exec ('sh ../scripts/activateReminder.sh'));
             await interaction.reply('Les rappels sont activés');
