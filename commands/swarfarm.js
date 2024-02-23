@@ -48,6 +48,8 @@ module.exports = {
 
         await interaction.deferReply();
 
+        const membername = interaction.member.user.username;
+
         const name = interaction.options.getString('name');
         const owner = interaction.options.getString('owner');
 
@@ -175,7 +177,6 @@ module.exports = {
             listEmbed.push(embed);
         }
 
-        const membername = interaction.member.user.username;
         await interaction.editReply({ embeds: listEmbed, files: listImg });
     }
 }
