@@ -4,6 +4,7 @@ const { exec } = require("child_process");
 
 
 module.exports = {
+    
     data: new SlashCommandBuilder()
         .setName('reminders')
         .setDescription('Active les Rappels')
@@ -12,17 +13,15 @@ module.exports = {
 
     async execute(interaction) {
 
-        await interaction.deferReply();
-
         const reminders = interaction.options.getString('reminders');
-        
+
         if (reminders === 'on') {
-            exec(exec ('sh ../scripts/activateReminder.sh'));
+            exec('sh ../scripts/activateReminder.sh');
             await interaction.reply('Les rappels sont activés');
         }
 
         if (reminders === 'off') {
-            exec(exec ('sh ../scripts/cancelReminder.sh'));
+            exec('sh ../scripts/cancelReminder.sh');
             await interaction.reply('Les rappels sont désactivés');
         }
     }
