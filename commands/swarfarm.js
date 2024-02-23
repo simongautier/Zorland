@@ -13,6 +13,8 @@ async function getPage(url) {
     return response.json();
 }
 
+console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
+
 async function getImage(response) {
     let monsterId = response;
     let url = `https://swarfarm.com/api/v2/monsters/${monsterId}/`;
@@ -53,13 +55,16 @@ module.exports = {
 
         let content = await getPage(url);
 
+        console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
+
         if (content.detail == "Not found." || content.count == 0) {
 
             content = await getPage(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`);
 
-
-            if (content.detail == "Not found." || content.count == 0) {
+             
+            if(fetch(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`).response != 200 || content.detail == "Not found." || content.count == 0) {
             await interaction.editReply("Le monstre n'a pas été trouvé", ephemral = true);
+            console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
             return;
             }
         }
@@ -169,8 +174,8 @@ module.exports = {
             listImg.push(imageMonster);
             listEmbed.push(embed);
         }
+
         const membername = interaction.member.user.username;
-        console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
         await interaction.editReply({ embeds: listEmbed, files: listImg });
     }
 }

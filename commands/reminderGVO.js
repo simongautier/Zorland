@@ -24,7 +24,7 @@ async function reminderSlime(interaction) {
 
 async function reminderSlimeTwo(interaction) {
     var messageSlimeTwo = " Le roi est apparu, pensez à le taper ! \nBonne chance et bon courage à tous ! \n\n"
-    await interaction.channel.send(messageSlimeTwo + roleMention('1087399168349315182'));
+    await interaction.channel.send(messageSlimeTwo + roleMention('1183531616971264150'));
 }
 
 module.exports = {
