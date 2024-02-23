@@ -14,12 +14,12 @@ module.exports = {
 
         await interaction.deferReply();
 
-        if (reminder === 'on') {
+        if (reminders === 'on') {
             exec(exec ('sh ../scripts/activateReminder.sh'));
             await interaction.reply('Les rappels sont activés');
         }
 
-        if (reminder === 'off') {
+        if (reminders === 'off') {
             exec(exec ('sh ../scripts/cancelReminder.sh'));
             await interaction.reply('Les rappels sont désactivés');
         }
