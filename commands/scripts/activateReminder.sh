@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Chemin vers le script à exécuter
-GVO="/Users/simongautier/Documents/Botdiscord/Zorland/commands/scripts/reminderGVO.sh"
-gvoSecond="/Users/simongautier/Documents/Botdiscord/Zorland/commands/scripts/reminderGVOSecond.sh"
-GVW="/Users/simongautier/Documents/Botdiscord/Zorland/commands/scripts/reminderGVW.sh"
-SubjugationFirst="/Users/simongautier/Documents/Botdiscord/Zorland/commands/scripts/reminderSubjugationFirst.sh"
-SubjugationSecond="/Users/simongautier/Documents/Botdiscord/Zorland/commands/scripts/reminderSubjugationSecond.sh"
+GVO="../scripts/reminderGVO.sh"
+gvoSecond="../scripts/reminderGVOSecond.sh"
+GVW="/../scripts/reminderGVW.sh"
+SubjugationFirst="../scripts/reminderSubjugationFirst.sh"
+SubjugationSecond="../scripts/reminderSubjugationSecond.sh"
 
 
 (crontab -l ; echo "0 0 12 ? * MON,THU *  $GVO") | crontab -
