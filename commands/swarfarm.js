@@ -13,7 +13,6 @@ async function getPage(url) {
     return response.json();
 }
 
-console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
 
 async function getImage(response) {
     let monsterId = response;
@@ -48,16 +47,15 @@ module.exports = {
 
         await interaction.deferReply();
 
-        const membername = interaction.member.user.username;
 
         const name = interaction.options.getString('name');
         const owner = interaction.options.getString('owner');
 
+        const membername = interaction.member.user.username;
+
         url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters/?monster__name=${name}`;
 
         let content = await getPage(url);
-
-        console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
 
         if (content.detail == "Not found." || content.count == 0) {
 
@@ -66,7 +64,6 @@ module.exports = {
              
             if(fetch(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`).response != 200 || content.detail == "Not found." || content.count == 0) {
             await interaction.editReply("Le monstre n'a pas été trouvé", ephemral = true);
-            console.log(membername + ` a utilisé la commande swarfarm : ${name} ${owner}`);
             return;
             }
         }

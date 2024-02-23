@@ -6,32 +6,22 @@ const { exec } = require("child_process");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('reminders')
-        .setDescription('Active les Rappels'),
+        .setDescription('Active les Rappels')
+        .addStringOption(option => option.setName('reminders').setDescription('Activer ou désactiver les rappels').setRequired(true)),
 
 
     async execute(interaction) {
 
-        const embed = new MessageEmbed()
-            .setColor('#0099ff')
-            .setTitle('Rappels')
-            .setDescription('Les rappels GVO / GVW / Laby et Subjugation sont activés !')
-            .setTimestamp()
-            .setFooter('Rappels');
+        await interaction.deferReply();
 
-        //launch .sh script
+        if (reminder === 'on') {
+            exec(exec ('sh ../scripts/activateReminder.sh'));
+            await interaction.reply('Les rappels sont activés');
+        }
 
-        if (interaction.options.getString('reminders') == "on") {
-            exec("sh ./scripts/activateReminder.sh")
+        if (reminder === 'off') {
+            exec(exec ('sh ../scripts/cancelReminder.sh'));
+            await interaction.reply('Les rappels sont désactivés');
         }
-        else if (interaction.options.getString('reminders') == "off") {
-            exec("sh ./scripts/cancelReminder.sh")
-        }
-        else {
-            console.log("error")
-            await interaction.reply({ content: "Invalid Option", ephemeral: true });
-        }
-        
-        await interaction.reply({ embeds: [embed] });
     }
-};
-
+}
