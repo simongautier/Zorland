@@ -14,6 +14,11 @@ module.exports = {
 
     async execute(interaction) {
 
+        const GetVerif = interaction.member.voice.channel;
+        if (!GetVerif) {
+            await interaction.reply('Merci de rejoindre un salon vocal pour utiliser cette commande !');
+            return;
+        }
 
         const addRequest = interaction.options.getString('add');
         queue.push(addRequest);

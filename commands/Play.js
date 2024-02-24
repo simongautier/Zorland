@@ -39,7 +39,7 @@ module.exports = {
         const GetVerif = interaction.member.voice.channel;
 
         if (!GetVerif) {
-            await interaction.reply('You need to be in a voice channel to play music!');
+            await interaction.reply('Merci de rejoindre un salon vocal pour utiliser cette commande !');
             return;
         }
 
