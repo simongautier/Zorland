@@ -31,27 +31,26 @@ module.exports = {
 
         url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters`
         
-        const content = await getPage(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/`);
+        const content = await getPage(`https://swarfarm.com/api/v2/profiles/${owner}/monsters/`);
  
+
         const nbrMonsters = content.count;
-        const monsters = content.results;
-        const monster = monsters[0];
-        const monsterId = monster.id;
-        const monsterName = monster.name;
 
         for (let i = 0; i < nbrMonsters; i++) {
-            const monster = monsters[i];
-            const monsterId = monster.id;
-            const monsterName = monster.name;
-            monsterIdToName[monsterId] = monsterName;
-            const monsterElement = monster.element;
-            const monsterStars = monster.base_stars;
-            const monsterLevel = monster.level;
-            const monsterRune = monster.runes;
-            const monsterSkill = monster.skills;
-            const monsterLeaderSkill = monster.leader_skill;
-            const monsterAwakened = monster.awaken_level;
-            const monsterSkillUps = monster.skills
+            
+            if (content.results[i].stars != 6 || content.results[i].level >= 30) {
+                console.log(content.results[i].monster);
+                console.log(content.results[i].level);
+                console.log(i);
+    
+                monsterName = await getPage(`https://swarfarm.com/api/bestiary/${content.results[i].monster}`)
+    
+                monsterName = monsterName.name;
+                console.log(monsterName);
+            }
+
         }
-    }
-}
+
+
+        return interaction.editReply(`Le Gdoc de ${owner} a été rempli avec succès`);
+    }};
