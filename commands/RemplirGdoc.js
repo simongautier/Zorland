@@ -1,6 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const json = require('../config.json');
 const fetch = require('node-fetch');
+const axios = require('axios');
+
+
 
 async function getPage(url) {
     const response = await fetch(url, {
@@ -32,7 +35,7 @@ module.exports = {
         url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters`
         
         const content = await getPage(`https://swarfarm.com/api/v2/profiles/${owner}/monsters/`);
- 
+
 
         const nbrMonsters = content.count;
 
@@ -43,9 +46,20 @@ module.exports = {
                 console.log(content.results[i].level);
                 console.log(i);
     
+
                 monsterName = await getPage(`https://swarfarm.com/api/bestiary/${content.results[i].monster}`)
     
                 monsterName = monsterName.name;
+                //attend 0,2 sec 
+                await new Promise(r => setTimeout(r, 200));
+                
+                axios.post('https://sheetdb.io/api/v1/yn567ib60rq3e', {
+                    monster: monsterName,
+                    level: content.results[i].level,
+                    stars: content.results[i].stars
+                })
+
+
                 console.log(monsterName);
             }
 
