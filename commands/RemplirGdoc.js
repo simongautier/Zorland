@@ -16,7 +16,7 @@ async function getPage(url) {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('Listing')
+        .setName('listing')
         .setDescription('Remplir le Gdoc avec les infos des monstres d\'un invocateur référencé dans Swarfarm')
         .addStringOption(option => option.setName('owner').setDescription('The owner of the monster').setRequired(true)),
 
