@@ -11,8 +11,8 @@ Labyrinthe="../scripts/reminderLabyrinthe.sh"
 
 (crontab -l ; echo "0 0 12 ? * MON,THU *  $GVO") | crontab -
 (crontab -l ; echo "0 0 9 ? * WED,FRI *  $GVW") | crontab -
-(crontab -l ; echo "0 0 9 ? * TUE *  $SubjugationFirst") | crontab -
-(crontab -l ; echo "0 0 21 ? * THU *  $SubjugationSecond") | crontab -
+(crontab -l ; echo "0 0 11 ? * MON *  $SubjugationFirst") | crontab -
+(crontab -l ; echo "0 0 21 ? * MON *  $SubjugationSecond") | crontab -
 (crontab -l ; echo "0 0 12 ? * TUE,FRI *   $gvoSecond") | crontab -
 
 

@@ -2,6 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discor
 const json = require('../config.json');
 const fetch = require('node-fetch');
 const axios = require('axios');
+//import google sheet Api
+const sheet = require('google-spreadsheet');
 
 
 
@@ -38,6 +40,15 @@ module.exports = {
 
 
         const nbrMonsters = content.count;
+
+        const sheetdb = 'https://sheetdb.io/api/v1/yn567ib60rq3e/sheets';
+
+        cout = sheetdb.count;
+
+        consolez.log(cout);
+
+
+        if (owner != sheetdb.owner) {
 
         for (let i = 0; i < nbrMonsters; i++) {
             
