@@ -15,8 +15,17 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	commands.push(command.data.toJSON());
+    try {
+        const command = require(`./commands/${file}`);
+        if (command && command.data && typeof command.data.toJSON === 'function') {
+			console.log(`Commande "${file}" importée avec succès.`);
+            commands.push(command.data.toJSON());
+        } else {
+            console.error(`Erreur: Commande "${file}" mal formée ou manquante de données appropriées.`);
+        }
+    } catch (error) {
+        console.error(`Erreur lors de l'importation de la commande "${file}":`, error);
+    }
 }
 
 // Construct and prepare an instance of the REST module

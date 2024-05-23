@@ -1,87 +1,80 @@
+const { channel } = require('diagnostics_channel');
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, messageLink, Message } = require('discord.js');
+const { ButtonStyle } = require('discord.js');
+const Discord = require('discord.js');
 const fs = require('fs');
-
-
-async function editMessage(message, interaction, GVW) {
-    await interaction.guild.members.fetch();
-    let GVWString = '';
-    await interaction.guild.members.cache.forEach(member => {
-
-        if (member.roles.cache.some(role => role.name === 'gvgworld')) {
-            GVW.push(member.user.username);
-        }
-
-
-    });
-    GVWString = GVW.join('\n');
-
-    if (GVWString === '') {
-        GVWString = 'Aucun joueur inscrit';
-    }
-    let embed = new EmbedBuilder()
-        .setTitle('Bilan des inscriptions')
-        .setDescription(`${GVWString}`)
-        .setTimestamp()
-
-    await message.edit({ embeds: [embed] })
-}
+const { data } = require('./GVO');
 
 
 module.exports = {
+    
     data: new SlashCommandBuilder()
-        .setName('gvw')
-        .setDescription("Listing des joueurs de la guilde inscrits aux différentes activités"),
+        .setName('nextgvw')
+        .setDescription(" inscritpion GVO"),
+
     async execute(interaction) {
 
-        let GVW = [];
-        let LastMessage = await interaction.channel.messages.fetch({ limit: 1 })
-        let message = LastMessage.first();
+        await interaction.deferReply();
 
         const button1 = new ButtonBuilder()
             .setCustomId('GVW_ON')
             .setLabel('Inscription GVW')
-            .setStyle('3');
+            .setStyle('1');
 
         const button2 = new ButtonBuilder()
             .setCustomId('GVW_OFF')
             .setLabel('désinscription GVW')
-            .setStyle('4');
+            .setStyle('2');
 
         const actionRow = new ActionRowBuilder()
             .addComponents(button1, button2);
 
-        await interaction.reply({ content: '', components: [actionRow] });
+    
+        const explications = new EmbedBuilder()
+            .setTitle('Inscriptionau prochaine siège')
+            .setDescription('Cliquez sur le bouton correspondant à votre situation pour le prochain siège')
+            .addFields(
+                { name: 'Inscription', value: 'Vous vous inscrivez pour le prochaine siège', inline: false },
+                { name: 'Désinscription', value: 'Vous vous désinscrivez du prochain siège', inline: false },
+                { name: 'Réserviste', value: 'Vous vous mettez en réserve pour le prochain siège (inscrit mais remplaçable si besoin)', inline: false },
+            )
+            .setTimestamp();
+
+        await interaction.editReply({embeds: [explications], components: [actionRow] });
 
         await interaction.client.on('interactionCreate', async interaction => {
+            
+            
             if (!interaction.isButton()) return;
-            GVW = [];
+
+
             const member = interaction.member;
-            const role = interaction.guild.roles.cache.find(role => role.name === 'gvgworld');
-            content = '';
+            const role = interaction.guild.roles.cache.find(role => role.name === 'Guild War');
+            let content = '';
             const membername = member.user.username;
+
             if (interaction.customId === 'GVW_ON') {
                 member.roles.add(role);
-                console.log(membername + " s'est inscrit à la GVW");
-                content = 'Vous êtes désormais inscrit à la GVW';
+                console.log(membername + " s'est inscrit à la GVW")
+                content = 'Vous êtes désormais inscrit pour la prochaine GVW'
             }
             else if (interaction.customId === 'GVW_OFF'){
-                member.roles.remove(role);
-                console.log(membername + " s'est désinscrit de la GVW");
-                content = 'Vous êtes désormais désinscrit de la GVW';
+                member.roles.remove(role) 
+                console.log(membername + " s'est désinscrit de la GVW")
+                content = 'Vous êtes désormais désinscrit de la prochaine GVW'
             }
             else {
                 return;
             }
 
-            await interaction.reply({ content , ephemeral: true, deleteAfter: 10 })
-                .then
-                (setTimeout(() => {
-                    interaction.deleteReply()
-                }, 3000))
-                .catch(console.error)
-
-
-            editMessage(message, interaction, GVW);
+            await interaction.reply({ content, ephemeral: true})
+            .then
+            (setTimeout(() => {
+                interaction.deleteReply()
+            }, 3000))
+            .catch(console.error)
+            // await interaction.editReply({ content :'Ta réponse a bien été prise en compte'});
         });
     }
 }
+

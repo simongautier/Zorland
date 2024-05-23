@@ -1,8 +1,7 @@
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
+ const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const json = require('../config.json');
 const fetch = require('node-fetch');
 const axios = require('axios');
-
 
 
 async function getPage(url) {
@@ -24,6 +23,7 @@ module.exports = {
         .addStringOption(option => option.setName('owner').setDescription('The owner of the monster').setRequired(true)),
 
 
+        
     async execute(interaction) {
 
         await interaction.deferReply();
@@ -32,26 +32,31 @@ module.exports = {
 
         const membername = interaction.member.user.username;
 
-        url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters`
-        
-        const content = await getPage(`https://swarfarm.com/api/v2/profiles/${owner}/monsters/`);
+        url = `https://sheetdb.io/api/v1/yn567ib60rq3e`;        
+        const content = await getPage(`${url}`);
 
 
         const nbrMonsters = content.count;
 
         for (let i = 0; i < nbrMonsters; i++) {
+
+            console.log(content)
             
-            if (content.results[i].stars != 6 || content.results[i].level >= 30) {
+            if (content.results[i].level >= 30) {
                 console.log(content.results[i].monster);
                 console.log(content.results[i].level);
                 console.log(i);
     
+
 
                 monsterName = await getPage(`https://swarfarm.com/api/bestiary/${content.results[i].monster}`)
     
                 monsterName = monsterName.name;
                 //attend 0,2 sec 
                 await new Promise(r => setTimeout(r, 200));
+
+                
+
                 
                 axios.post('https://sheetdb.io/api/v1/yn567ib60rq3e', {
                     monster: monsterName,
@@ -67,4 +72,4 @@ module.exports = {
 
 
         return interaction.editReply(`Le Gdoc de ${owner} a été rempli avec succès`);
-    }};
+    }}; 
