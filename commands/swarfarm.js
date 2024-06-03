@@ -2,6 +2,10 @@ const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discor
 const json = require('../config.json');
 const fetch = require('node-fetch');
 const runeType = require('../commands/assets/Runes_Type.json');
+const math = require('mathjs');
+
+
+
 
 async function getPage(url) {
     const response = await fetch(url, {
@@ -34,7 +38,6 @@ function formattingName(name) {
     }
 }
 
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('swarfarm')
@@ -45,6 +48,7 @@ module.exports = {
 
     async execute(interaction) {
 
+
         await interaction.deferReply();
 
 
@@ -53,18 +57,34 @@ module.exports = {
 
         const membername = interaction.member.user.username;
 
-        url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters/?monster__name=${name}`;
+        let url = `https://swarfarm.com/api/v2/profiles/${owner}/monsters/?monster__name=${name}`;
 
-        let content = await getPage(url);
+        async function getPage(url) {
+    try {
+        const response = await fetch(url, {
+            headers: {
+                Accept: "application/json",
+                "X-Csrftoken": "vNPF8DuKt4JkYxrnBC7dR0G59bVm5FJo8mMzFAiz0c3eUFwT9rqRuvhCY2S9C9gJ"
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la page:', error);
+        return { detail: 'Not found.' };
+    }
+}
+
+
+        content = await getPage(url);
 
         if (content.detail == "Not found." || content.count == 0) {
-
-            content = await getPage(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`);
-
              
             if(fetch(`https://swarfarm.com/api/v2/profiles/${formattingName(owner)}/monsters/?monster__name=${name}`).response != 200 || content.detail == "Not found." || content.count == 0) {
-            await interaction.editReply("Le monstre n'a pas été trouvé", ephemral = true);
-            return;
+                await interaction.editReply({ content: "Le monstre n'a pas été trouvé", ephemeral: true });
+                return;
             }
         }
 
@@ -73,20 +93,23 @@ module.exports = {
 
         const listEmbed = [];
         const listImg = [];
+        let rta_hp, rta_attack, rta_defense, rta_speed, rta_crit_rate, rta_crit_damage, rta_resistance, rta_accuracy;
 
         for (let i = 0; i < nbrMonsters; i++) {
 
             const test = await getImage(content.results[i].monster);
             const imageMonster = new AttachmentBuilder(test, { name: 'image' + String(i) + '.png' });
 
-            const total_ATK = content.results[i].rune_attack + content.results[i].base_attack;
-            const total_DEF = content.results[i].rune_defense + content.results[i].base_defense;
-            const total_HP = content.results[i].rune_hp + content.results[i].base_hp;
-            const total_SPD = content.results[i].rune_speed + content.results[i].base_speed;
-            const total_TC = content.results[i].rune_crit_rate + content.results[i].base_crit_rate;
-            const total_DC = content.results[i].rune_crit_damage + content.results[i].base_crit_damage;
-            const total_RES = content.results[i].rune_resistance + content.results[i].base_resistance;
-            const total_ACC = content.results[i].rune_accuracy + content.results[i].base_accuracy;
+
+            const base_attack =  content.results[i].base_attack;
+            const base_defense =  content.results[i].base_defense;
+            const base_hp = content.results[i].base_hp;
+            const base_speed = content.results[i].base_crit_rate;
+            const base_crit_rate = content.results[i].base_crit_rate;
+            const base_crit_damage = content.results[i].base_crit_damage;
+            const base_resistance = content.results[i].base_resistance;
+            const base_accuracy = content.results[i].base_accuracy;
+
 
             const runeSet = content.results[i].default_build;
 
@@ -104,16 +127,8 @@ module.exports = {
 
             const listSet = [];
 
-            for (let j = 0; j < runeSetmonster.length; j++) {
-                const typeRune = runeSetmonster[j][0];
-                const runeOccurence = runeSetmonster[j][1];
-                const verif = runeType.find(elt => elt.type == typeRune)
 
-                if (runeOccurence >= verif.SetNbr) {
-                    listSet.push(verif.name);  
-                }
-              
-            }
+            console.log(content.results[i].rta_build);
 
             const embed = new EmbedBuilder()
                 .setTitle(`${name.toUpperCase()}`)
@@ -122,45 +137,45 @@ module.exports = {
                 .setThumbnail(`attachment://` + 'image' + String(i) + '.png')
                 .addFields({
                     name: 'HP',
-                    value: String(total_HP) + " (+ " + String(content.results[i].rune_hp) + ")",
+                    value: String(content.results[i].base_hp) + " (+ " + String(content.results[i].rune_hp) + ")",
                     inline: true,
                     color: 0x00ff00,
                 }, {
                     name: 'Crit. Rate',
-                    value: String(total_TC) + " (+ " + String(content.results[i].rune_crit_rate) + ")",
+                    value: String(content.results[i].base_crit_rate) + " (+ " + String(content.results[i].rune_crit_rate) + ")",
                     inline: true,
                 }, {
                     name: '   ',
                     value: '   ',
                 }, {
                     name: 'ATK',
-                    value: String(total_ATK) + " (+ " + String(content.results[i].rune_attack) + ")",
+                    value: String(content.results[i].base_attack) + " (+ " + String(content.results[i].rune_attack) + ")",
                     inline: true,
                 }, {
                     name: 'Crit. Damage',
-                    value: String(total_DC) + " (+ " + String(content.results[i].rune_crit_damage) + ")",
+                    value: String(content.results[i].base_crit_damage) + " (+ " + String(content.results[i].rune_crit_damage) + ")",
                     inline: true,
                 }, {
                     name: '   ',
                     value: '   ',
                 }, {
                     name: 'DEF',
-                    value: String(total_DEF) + " (+ " + String(content.results[i].rune_defense) + ")",
+                    value: String(content.results[i].base_defense) + " (+ " + String(content.results[i].rune_defense) + ")",
                     inline: true,
                 }, {
                     name: 'Résistance',
-                    value: String(total_RES) + " (+ " + String(content.results[i].rune_resistance) + ")",
+                    value: String(content.results[i].base_resistance) + " (+ " + String(content.results[i].rune_resistance) + ")",
                     inline: true,
                 }, {
                     name: '   ',
                     value: '   ',
                 }, {
                     name: 'Speed',
-                    value: String(total_SPD) + " (+ " + String(content.results[i].rune_speed) + ")",
+                    value: String(content.results[i].base_speed) + " (+ " + String(content.results[i].rune_speed) + ")",
                     inline: true,
                 }, {
                     name: 'Précision',
-                    value: String(total_ACC) + " (+ " + String(content.results[i].rune_accuracy) + ")",
+                    value: String(content.results[i].base_accuracy) + " (+ " + String(content.results[i].rune_accuracy) + ")",
                     inline: true,
                 }, {
                     name: '   ',
@@ -170,10 +185,69 @@ module.exports = {
                     value: listSet.length == 0 ? "Pas de set" : listSet.join(', '),
 
                 })
+
+
+                const rta_hp = math.round((((base_hp * content.results[i].rta_build.hp_pct) / 100) + content.results[i].rta_build.hp));
+                const rta_attack = math.round((((base_attack * content.results[i].rta_build.attack_pct) / 100) + content.results[i].rta_build.attack));
+                const rta_defense = math.round((((base_defense * content.results[i].rta_build.defense_pct) / 100) + content.results[i].rta_build.defense));
+                const rta_speed = math.round((((base_speed * content.results[i].rta_build.speed_pct) / 100) + content.results[i].rta_build.speed));
+                const rta_crit_rate = content.results[i].rta_build.crit_rate;
+                const rta_crit_damage =  content.results[i].rta_build.crit_damage;
+                const rta_resistance =  content.results[i].rta_build.resistance;
+                const rta_accuracy =  content.results[i].rta_build.accuracy;
+
+            const embedRTA = new EmbedBuilder()
+            .setTitle(`RTA`)
+                .setColor(0x206694)
+                .setThumbnail(`attachment://` + 'image' + String(i) + '.png')
+                .addFields({
+                    name: 'HP',
+                    value: String(content.results[i].base_hp) + " (+ " + String(rta_hp) + ")",
+                    inline: true,
+                    color: 0x00ff00,
+                }, {
+                    name: 'Crit. Rate',
+                    value: String(content.results[i].base_crit_rate) + " (+ " + String(rta_crit_rate) + ")",
+                    inline: true,
+                }, {
+                    name: '   ',
+                    value: '   ',
+                }, {
+                    name: 'ATK',
+                    value: String(content.results[i].base_attack) + " (+ " + String(rta_attack) + ")",
+                    inline: true,
+                }, {
+                    name: 'Crit. Damage',
+                    value: String(content.results[i].base_crit_damage) + " (+ " + String(rta_crit_damage) + ")",
+                    inline: true,
+                }, {
+                    name: '   ',
+                    value: '   ',
+                }, {
+                    name: 'DEF',
+                    value: String(content.results[i].base_defense) + " (+ " + String(rta_defense) + ")",
+                    inline: true,
+                }, {
+                    name: 'Résistance',
+                    value: String(content.results[i].base_resistance) + " (+ " + String(rta_resistance) + ")",
+                    inline: true,
+                }, {
+                    name: '   ',
+                    value: '   ',
+                }, {
+                    name: 'Speed',
+                    value: String(content.results[i].base_speed) + " (+ " + String(rta_speed) + ")",
+                    inline: true,
+                }, {
+                    name: 'Précision',
+                    value: String(content.results[i].base_accuracy) + " (+ " + String(rta_accuracy) + ")",
+                    inline: true,
+                })
+
+            
             listImg.push(imageMonster);
-            listEmbed.push(embed);
-        }
+            listEmbed.push(embed, embedRTA);
 
         await interaction.editReply({ embeds: listEmbed, files: listImg });
-    }
+        }}
 }
