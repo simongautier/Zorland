@@ -1448,8 +1448,9 @@ ytdl@^1.4.1:
     streamspeed "^2.0.1"
     ytdl-core "^4.1.0"
 
-"ytsr@github:Yonle/node-ytsr":
-  version "0.0.0-development"
-  resolved "git+ssh://git@github.com/Yonle/node-ytsr.git#3f0ed0af53251ec1bdecbf4b8f0dc4f934930817"
+ytsr@^3.8.4:
+  version "3.8.4"
+  resolved "https://registry.npmjs.org/ytsr/-/ytsr-3.8.4.tgz"
+  integrity sha512-rrJo59vDDf98mz/Cuw7Y2YiuTwSm3cs4XsXrP6yjYDXYup/aE0lRxY6XMKR3mGOHKwgLouZqFq8QRllVVVN88w==
   dependencies:
     miniget "^4.2.2"

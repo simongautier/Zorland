@@ -17,7 +17,6 @@ async function getPage(url) {
     return response.json();
 }
 
-
 async function getImage(response) {
     let monsterId = response;
     let url = `https://swarfarm.com/api/v2/monsters/${monsterId}/`;
@@ -103,17 +102,25 @@ module.exports = {
             const base_attack =  content.results[i].base_attack;
             const base_defense =  content.results[i].base_defense;
             const base_hp = content.results[i].base_hp;
-            const base_speed = content.results[i].base_crit_rate;
+            const base_speed = content.results[i].base_speed;
             const base_crit_rate = content.results[i].base_crit_rate;
             const base_crit_damage = content.results[i].base_crit_damage;
             const base_resistance = content.results[i].base_resistance;
             const base_accuracy = content.results[i].base_accuracy;
 
-
             const runeSet = content.results[i].default_build;
 
             const occurence  = runeSet.runes.reduce((acc, rune) => {
                 const type = rune.type
+
+                if (runeSet && runeSet.runes && runeSet.runes.length > 0) {
+                    // Check if runeSet.runes[0].type is undefined or null and set it to "None" if it is
+                    runeSet.runes[0].type = runeSet.runes[0].type ?? "None";
+                    console.log(runeSet.runes[0].type);
+                } else {
+                    console.log("runeSet or runeSet.runes[0] is undefined");
+                }
+                
                 if (!(type in acc)) {
                     acc[type] = 1
                 }  else {
@@ -121,13 +128,29 @@ module.exports = {
                 }
                 return acc;
             }, {})
+            console.log(occurence);
+
+
+
+            const listSet = [];
+            const listSetRTA = [];
 
             const runeSetmonster = Object.entries(occurence)
 
-            const listSet = [];
+            for (let j = 0; j < runeSetmonster.length; j++) {
+                const typeRune = runeSetmonster[j][0];
+                const runeOccurence = runeSetmonster[j][1];
 
+                const verif = runeType.find(elt => elt.type == typeRune)
 
-            console.log(content.results[i].rta_build);
+                console.log(verif, runeOccurence)
+                if (runeOccurence >= verif.SetNbr) {
+                    console.log(verif.name);
+                    listSet.push(verif.name);  
+                }
+
+            }
+
 
             const embed = new EmbedBuilder()
                 .setTitle(`${name.toUpperCase()}`)
@@ -194,6 +217,44 @@ module.exports = {
                 const rta_resistance =  content.results[i].rta_build.resistance;
                 const rta_accuracy =  content.results[i].rta_build.accuracy;
 
+                const runeSetRTA = content.results[i].rta_build;
+
+                const occurenceRTA  = runeSetRTA.runes.reduce((acc, rune) => {
+                    const type = rune.type
+    
+                    if (runeSetRTA && runeSetRTA.runes && runeSetRTA.runes.length > 0) {
+                        // Check if runeSet.runes[0].type is undefined or null and set it to "None" if it is
+                        runeSetRTA.runes[0].type = runeSetRTA.runes[0].type ?? "None";
+                        console.log(runeSetRTA.runes[0].type);
+                    } else {
+                        console.log("runeSet or runeSet.runes[0] is undefined");
+                    }
+                    
+                    if (!(type in acc)) {
+                        acc[type] = 1
+                    }  else {
+                        acc[type] += 1
+                    }
+                    return acc;
+                }, {})
+                console.log(occurenceRTA);
+    
+                const runeSetmonsterRTA = Object.entries(occurenceRTA)
+    
+                for (let j = 0; j < runeSetmonsterRTA.length; j++) {
+                    const typeRune = runeSetmonsterRTA[j][0];
+                    const runeOccurenceRTA = runeSetmonsterRTA[j][1];
+    
+                    const verif = runeType.find(elt => elt.type == typeRune)
+    
+                    console.log(verif, runeOccurenceRTA)
+                    if (runeOccurenceRTA >= verif.SetNbr) {
+                        console.log(verif.name);
+                        listSetRTA.push(verif.name);  
+                    }
+    
+                }
+    
             const embedRTA = new EmbedBuilder()
             .setTitle(`RTA`)
                 .setColor(0x206694)
@@ -240,6 +301,10 @@ module.exports = {
                     name: 'Précision',
                     value: String(content.results[i].base_accuracy) + " (+ " + String(rta_accuracy) + ")",
                     inline: true,
+                }, {
+                    name: 'Rune Set',
+                    value: listSetRTA.length == 0 ? "Pas de set" : listSetRTA.join(', '),
+
                 })
 
             

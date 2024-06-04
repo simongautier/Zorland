@@ -18,7 +18,7 @@
     "youtube-search": "^1.1.2",
     "ytdl": "^1.4.1",
     "ytdl-core": "^4.11.3",
-    "ytsr": "github:Yonle/node-ytsr"
+    "ytsr": "^3.8.4"
   },
   "name": "bot",
   "version": "1.0.0",
