@@ -9,8 +9,8 @@ const { data } = require('./GVO');
 module.exports = {
     
     data: new SlashCommandBuilder()
-        .setName('nextgvw')
-        .setDescription(" inscritpion GVO"),
+        .setName('gvw')
+        .setDescription(" inscritpion GVW"),
 
     async execute(interaction) {
 

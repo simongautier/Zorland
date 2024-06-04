@@ -93,7 +93,6 @@ module.exports = {
 
         const listEmbed = [];
         const listImg = [];
-        let rta_hp, rta_attack, rta_defense, rta_speed, rta_crit_rate, rta_crit_damage, rta_resistance, rta_accuracy;
 
         for (let i = 0; i < nbrMonsters; i++) {
 
@@ -185,7 +184,6 @@ module.exports = {
                     value: listSet.length == 0 ? "Pas de set" : listSet.join(', '),
 
                 })
-
 
                 const rta_hp = math.round((((base_hp * content.results[i].rta_build.hp_pct) / 100) + content.results[i].rta_build.hp));
                 const rta_attack = math.round((((base_attack * content.results[i].rta_build.attack_pct) / 100) + content.results[i].rta_build.attack));
