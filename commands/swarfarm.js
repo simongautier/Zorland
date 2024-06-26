@@ -148,7 +148,9 @@ module.exports = {
                     console.log(verif.name);
                     listSet.push(verif.name);  
                 }
-
+                else {
+                    console.log("Pas de set")
+                }
             }
 
 
